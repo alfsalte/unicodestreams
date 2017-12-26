@@ -1,4 +1,7 @@
 
+README for unicodestreams
+=========================
+
 Unicodestreams is a set of classes that allow you to read
 unicode encoded files using iostreams.
 
