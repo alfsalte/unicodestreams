@@ -1,0 +1,57 @@
+
+Unicodestreams is a set of classes that allow you to read
+unicode encoded files using iostreams.
+
+For example if you have a file in UTF-16 but you want to read it as
+UTF-32 - here is what you do:
+
+std::basic_ifstream<char16_t>  f("The.file.you.want.to.read");
+alf::unicodestreams::u32u16istream g(f);
+
+char32_t x;
+if (! g.get(x))
+   std::cerr << "Problem reading the file" << std::endl;
+
+// x is the UTF-32 encoded character from the file.
+
+Now, it may be that the file is written with a different endianess than
+what you are used to, so if the file is written in UTF-16LE and you
+are on a BE machine so you get all bytes swapped, then try this:
+
+std::basic_ifstream<char16_t> f("The.file.you.want.to.read");
+alf::unicodestreams::u16bswap_istream s(f, swap_state_type::LE);
+alf::unicodestreams::u32u16istream g(s);
+
+char32_t x;
+g >> x;
+
+x is a character from the file.
+Note, that on an LE machine, the stream s above will essentially do nothing
+and just let the characters pass through.
+
+For reading and if the file starts with the byte order mark (U+FEFF) you can
+set the state to be:
+
+std::basic_ifstream<char16_t> f("The.file.you.want.to.read");
+alf::unicodestreams::u16bswap_istream s(f, swap_state_type::FChar);
+alf::unicodestreams::u32u16istream g(s);
+
+When reading the very first char it will check what swap strategy to use
+if any based on insistance that the first char is U+FEFF. If the first char
+is not U+FEFF, it will fail.
+
+FChar on output will ensure that if the first char is not U+FEFF, it will
+insert U+FEFF before the first char.
+
+There are byteswap classes for both UTF-16 and UTF-32.
+
+A class such as u32istream will read UTF-32 and deliver UTF-32 but will check
+that each char is indeed a valid unicode character.
+
+class such as u16utf8istream will read UTF-8 from the file but deliver it
+to you as char16_t and the stream itself has basic_istream<char16_t> as
+baseclass.
+
+Ditto for ostreams and writing.
+u32utf8ostream will write char32_t UTF-32 but the file will be UTF-8.
+
