@@ -6,7 +6,7 @@ Unicodestreams is a set of classes that allow you to read
 unicode encoded files using iostreams.
 
 For example if you have a file in UTF-16 but you want to read it as
-UTF-32 - here is what you do:
+UTF-32 - here is what you can do:
 
 std::basic_ifstream<char16_t>  f("The.file.you.want.to.read");
 alf::unicodestreams::u32u16istream g(f);
